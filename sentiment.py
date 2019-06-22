@@ -75,36 +75,49 @@ num_test = 5000
 mask = range(num_test)
 
 Y_Val = Y_train[:num_test]
-Y_Val2 = Y_train[:num_test]
 X_Val = X_train[:num_test]
 
 
 X_train = X_train[num_test:]
 Y_train = Y_train[num_test:]
 
+'''
+#Removing stopwords result in lower accuracy?
+stop_words = stopwords.words('english')
+
+def removeStopWords(data, stop_words):
+    count = 0
+    print("Process:\n")
+    for i in range (len(data)):
+        data[i] = " ".join([w for w in data[i].split() if w not in stop_words])
+        count = count + 1
+        print(count, end=" ")
+    return data
+
+print("\nBefore:\n")
+print(X_train[0])
+print(X_Val[0])
+print(X_test[0])
+
+print("\nRemoving stopwords...")
+X_train = removeStopWords(X_train, stop_words)
+X_val = removeStopWords(X_Val, stop_words)
+X_test = removeStopWords(X_test, stop_words)
+print("Successfully remove stop words!")
+
+print("\nAfter:\n")
+print(X_train[0])
+print(X_Val[0])
+print(X_test[0])
+'''
+
+#Encode text
 maxWordCount= 1000
 maxDictionary_size = Tokenizer_vocab_size
 
 encoded_Xtrain = Tokenizer.texts_to_sequences(X_train)
 encoded_Xval = Tokenizer.texts_to_sequences(X_Val)
 encoded_Xtest = Tokenizer.texts_to_sequences(X_test)
-
-
-#Removing stopwords result in lower accuracy?
-stop_words = set(stopwords.words('english'))
-
-def removeStopWords(data, stop_words):
-    filtered = []
-    for i in range (len(data)):
-        for w in data[i]: 
-            if w not in stop_words: 
-                filtered.append(w)
-        data[i] = filtered
-    return data
-
-encoded_Xtrain = removeStopWords(encoded_Xtrain, stop_words)
-encoded_Xval = removeStopWords(encoded_Xval, stop_words)
-encoded_Xtest = removeStopWords(encoded_Xtest, stop_words)
 
 
 #padding all text to same size
@@ -142,18 +155,18 @@ print('X_test.shape is ', X_test.shape)
 #model
 model = Sequential()
 
-model.add(Embedding(maxDictionary_size, 32, input_length=maxWordCount)) #to change words to ints
+model.add(Embedding(maxDictionary_size, 100, input_length=maxWordCount)) #to change words to ints
 # model.add(Conv1D(filters=32, kernel_size=3, padding='same', activation='relu'))
 #hidden layers
 # model.add(MaxPooling1D(pool_size=2))
 # model.add(Dropout(0.5))
 # model.add(Conv1D(filters=32, kernel_size=2, padding='same', activation='relu'))
 # model.add(MaxPooling1D(pool_size=2))
-model.add(LSTM(20))
+model.add(LSTM(128))
 #model.add(SimpleRNN(30))
 # model.add(Flatten())
-#model.add(Dropout(0.5))
-model.add(Dense(30, activation='relu',W_constraint=maxnorm(1)))
+model.add(Dropout(0.5))
+model.add(Dense(32, activation='relu',W_constraint=maxnorm(1)))
 model.add(LeakyReLU(alpha=0.01))
 # model.add(Dropout(0.6))
 #model.add(Dense(50, activation='relu',W_constraint=maxnorm(1)))
@@ -169,7 +182,7 @@ model.summary()
 
 
 learning_rate=0.0001
-epochs = 10
+epochs = 4
 batch_size = 50
 #sgd = SGD(lr=learning_rate, nesterov=True, momentum=0.7, decay=1e-4)
 Nadam = keras.optimizers.Nadam(lr=0.002, beta_1=0.9, beta_2=0.999, epsilon=1e-08, schedule_decay=0.004)
