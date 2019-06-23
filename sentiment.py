@@ -181,7 +181,7 @@ model.add(Dense(5, activation='softmax'))
 model.summary()
 
 
-learning_rate=0.0001
+learning_rate=0.01
 epochs = 4
 batch_size = 50
 #sgd = SGD(lr=learning_rate, nesterov=True, momentum=0.7, decay=1e-4)
