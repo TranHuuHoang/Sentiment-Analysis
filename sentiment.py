@@ -63,24 +63,6 @@ print('Training data shapes')
 print('X_train.shape: ', X_train.shape)
 print('Y_train.shape: ',Y_train.shape)
 
-
-Tokenizer = Tokenizer()
-Tokenizer.fit_on_texts(np.concatenate((X_train, X_test), axis=0))
-# Tokenizer.fit_on_texts(X_train)
-Tokenizer_vocab_size = len(Tokenizer.word_index) + 1
-print("Vocab size",Tokenizer_vocab_size)
-
-#masking
-num_test = 5000
-mask = range(num_test)
-
-Y_Val = Y_train[:num_test]
-X_Val = X_train[:num_test]
-
-
-X_train = X_train[num_test:]
-Y_train = Y_train[num_test:]
-
 '''
 #Removing stopwords result in lower accuracy?
 stop_words = stopwords.words('english')
@@ -110,6 +92,25 @@ print(X_train[0])
 print(X_Val[0])
 print(X_test[0])
 '''
+
+
+Tokenizer = Tokenizer()
+Tokenizer.fit_on_texts(np.concatenate((X_train, X_test), axis=0))
+# Tokenizer.fit_on_texts(X_train)
+Tokenizer_vocab_size = len(Tokenizer.word_index) + 1
+print("Vocab size",Tokenizer_vocab_size)
+
+#masking
+num_test = 5000
+mask = range(num_test)
+
+Y_Val = Y_train[:num_test]
+X_Val = X_train[:num_test]
+
+
+X_train = X_train[num_test:]
+Y_train = Y_train[num_test:]
+
 
 #Encode text
 maxWordCount= 1000
